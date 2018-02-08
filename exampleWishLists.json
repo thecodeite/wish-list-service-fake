@@ -1,0 +1,32 @@
+{
+  "wishlists": [
+      {
+          "id": "glaup43450015",
+          "name": "test-wishlist",
+          "lastUpdateTimestamp": 1515491564127,
+          "products": [
+              {
+                  "productId": "1603102",
+                  "skuId": "233783109",
+                  "image": "//johnlewis.scene7.com/is/image/JohnLewis/233783109?",
+                  "title": "Zanussi ZWF91483WH Washing Machine, 9kg Load, A+++ Energy Rating, 1400rpm Spin, White",
+                  "price": 329,
+                  "productCode": "88930838",
+                  "includedServices": [
+                      "2 year guarantee included"
+                  ],
+                  "stockAvailability": 402,
+                  "displaySpecialOffer": "",
+                  "isInStoreOnly": false,
+                  "isFBL": false
+              }
+          ]
+      },
+      {
+          "id": "glaup43450016",
+          "name": "test-wishlist2",
+          "lastUpdateTimestamp": 1515491709708,
+          "products": []
+      }
+  ]
+}
