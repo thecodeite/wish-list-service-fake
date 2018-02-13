@@ -33,11 +33,10 @@ function makeWishlist(rnd, count) {
   const image = products.length === 0 ? '' : products[0].image
 
   return {
-    name,
     id: md5(name),
-    image,
-    count,
-    products
+    name,
+    lastUpdateTimestamp: (new Date()).getTime(),
+    products,
   }
 }
 
@@ -47,11 +46,20 @@ function makeProduct(rnd) {
   const stockRnd = innerRnd()
   const titleRnd = innerRnd()
   const imageId = images[Math.floor(images.length * innerRnd())]
+
+  const title = randomWords(innerRnd, 1 + Math.floor(titleRnd * titleRnd * 3)).join(' ')
   return {
-    title: randomWords(innerRnd, 1 + Math.floor(titleRnd * titleRnd * 3)).join(' '),
+    productId: parseInt(md5(title), 16) % 1000000,
+    skuId: md5(title),
     image: `http://localhost:3009/image/${imageId}?`,
-    price: '£' + (priceRnd < 5 ? Math.floor(priceRnd * 50) : 5 * Math.floor(priceRnd * 50)),
-    stock: stockRnd < .3 ? 0 : Math.floor(stockRnd * 100)
+    title,
+    price: (priceRnd < 5 ? Math.floor(priceRnd * 50) : 5 * Math.floor(priceRnd * 50)) + ((Math.floor(priceRnd*100)%10) > 5 ? -0.01 : 0),
+    productCode: parseInt(md5('code'+title), 16) % 100000,
+    includedServices: [],
+    stockAvailability: stockRnd < .3 ? 0 : Math.floor(stockRnd * 100),
+    displaySpecialOffer: '',
+    isFBL: '',
+    isInStoreOnly: ''
   }
 }
 
@@ -83,14 +91,14 @@ app.use((req, res, next) => {
   next()
 })
 
-app.get('/api/v1/customer/:userId/wish-lists/', (req, res) => {
+app.get('/api/customer/v1/:userId/wish-lists', (req, res) => {
   res.json({
     user: req.params.userId,
     wishlists: userWishLists[req.params.userId] || []
   })
 })
 
-app.get('/api/v1/customer/:userId/wish-lists/:listId', (req, res) => {
+app.get('/api/customer/v1/:userId/wish-lists/:listId', (req, res) => {
   const list = userWishLists[req.params.userId].find(x => x.id === req.params.listId)
   res.json(list)
 })
@@ -120,6 +128,9 @@ const sizes = {
   '$rsp-pdp-main-640': 640,
   '$rsp-pdp-main-1080$': 1080,
   '$rsp-pdp-main-1440$': 1440,
+  '$rsp-plp-main-160$': 160,
+  '$rsp-plp-main-320$': 320,
+  '$rsp-plp-main-540$': 540,
 }
 
 app.get('/image/:id', (req, res) => {
@@ -145,10 +156,6 @@ app.get('/image/:id', (req, res) => {
       res.type('jpg')
       res.send(buffer)
     })
-
-  //const {image} = req.query
-  // //const cleanImage = image.replace(/\$.*\$/, '')
-
 })
 
 function refresh(seed) {
